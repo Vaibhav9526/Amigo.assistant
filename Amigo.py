@@ -1,0 +1,153 @@
+import pyttsx3 #pip install pyttsx3
+import speech_recognition as sr #pip install speechRecognition
+import datetime
+import wikipedia #pip install wikipedia
+import webbrowser
+import os
+import smtplib
+import random
+import pywhatkit
+import pyjokes
+import pyautogui
+
+
+engine = pyttsx3.init('sapi5')
+voices = engine.getProperty('voices')
+# print(voices[1].id)
+engine.setProperty('voices', voices[0].id)
+
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+
+def wishMe():
+    hour = int(datetime.datetime.now().hour)
+    if hour>=0 and hour<12:
+        speak("Good Morning!")
+
+    elif hour>=12 and hour<18:
+        speak("Good Afternoon!")   
+
+    else:
+        speak("Good Evening!")  
+
+    speak("I am Jarvis Sir. Please tell me how may I help you")       
+
+def takeCommand():
+    #It takes microphone input from the user and returns string output
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        r.pause_threshold = 1
+        audio = r.listen(source)
+
+    try:
+        print("Recognizing...")    
+        query = r.recognize_google(audio, language='en-in')
+        print(f"User said: {query}\n")
+
+    except Exception as e:
+        # print(e)    
+        print("Say that again please...")  
+        return "None"
+    return query
+
+def sendEmail(to, content):
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.ehlo()
+    server.starttls()
+    server.login('youremail@gmail.com', 'your-password')
+    server.sendmail('youremail@gmail.com', to, content)
+    server.close()
+
+if __name__ == "__main__":
+    wishMe()
+    while True:
+    # if 1:
+        query = takeCommand().lower()
+
+        # Logic for executing tasks based on query
+        if 'wikipedia' in query:
+            speak('Searching Wikipedia...')
+            query = query.replace("wikipedia", "")
+            results = wikipedia.summary(query, sentences=2)
+            speak("According to Wikipedia")
+            print(results)
+            speak(results)
+
+        elif 'open youtube' in query:
+            webbrowser.open("youtube.com")
+
+        elif 'open google' in query:
+            webbrowser.open("google.com")
+
+        elif 'open stackoverflow' in query:
+            webbrowser.open("stackoverflow.com")
+
+        elif 'Notepad kholo' in query:
+            path  = 'C:\\Windows\\system32\\notepad.exe'
+            os.startfile(path)
+
+        elif 'sing for me' in query:
+            music_dir = 'C:\\Users\\USER\\Documents\\vivo\\testing sound'
+            songs = os.listdir(music_dir)
+            print(songs)    
+            os.startfile(os.path.join(music_dir, songs[0]))
+
+        elif 'the time' in query:
+            strTime = datetime.datetime.now().strftime("%H:%M:%S")    
+            speak(f"Sir, the time is {strTime}")
+
+        if 'play' in query:
+            song = query.replace('play', '')
+            speak('playing ' + song)
+            pywhatkit.playonyt(song)
+       
+        elif 'i am very tired' in query:
+            speak('then go to sleep')
+        elif 'never' in query:
+            speak("ok then enjoy")   
+        elif ('mute') in query:
+            pyautogui.press("mute")
+            
+        elif 'joke' in query:
+            speak(pyjokes.get_joke())
+            
+        elif 'kya tum sun rahe ho' in query:
+            speak("yes  sir i am listening you whats  the order")
+
+        elif 'open code' in query:
+            codePath = "C:\\Users\\USER\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
+            os.startfile(codePath)
+        elif 'hi'in query or 'how are you' in query or 'whats up' in query:
+            stMsgs = ['Just doing my thing!', 'I am fine!', 'Nice!', 'I am nice and full of energy']
+            speak(random.choice(stMsgs))
+
+        elif 'aur sunao' in query:
+            speak("everything good sir")
+            print("EKK NO. MAJA ME")
+
+        elif 'write a message to' in query:
+            try:
+                 person = query.replace('write a  message to', '')
+                 speak("What should I say?")
+                 webbrowser.open("whatsapp-web")
+                 content = takeCommand()
+                 to = "(kindo)" or ("bhai 2")   
+                 whatsapp-web (to, content)
+                 speak("meessage has been sent!")
+            except Exception as e:
+                print(e)
+                speak("Sorry my friend vaibhav bhai. I am not able to send this message")
+            
+        elif "search on chrome" in query:
+            speak('what  should  i search')
+            search = takeCommand()
+            chrompath = 'C://Program Files//Google//Chrome//Application//chrome.exe %s'
+            webbrowser.get(chrompath).open_new_tab('https://www.google.com/search?q=',takeCommand())
+        
+        if 'bye' in query:
+            speak("bye sir and have a nice day")
+            exit()
